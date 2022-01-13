@@ -1,17 +1,107 @@
 <template>
-  <div>登录页面</div>
+  <div class="login-body">
+    <div class="login">
+      <div class="login-title">系统登录</div>
+      <div class="login-form">
+        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="账号" prop="name">
+            <el-input v-model.number="ruleForm.name" autocomplete="off" placeholder="请输入账号"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="pass">
+            <el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="请输入密码"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button class="buton" type="primary" size="medium" @click="submitForm('ruleForm')">提交</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
   export default {
     name: 'Login',
-    data () {
+    data() {
+      var checkName = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('账号不能为空'));
+        }
+        callback();
+      };
+      var validatePass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'));
+        } else {
+          if (this.ruleForm.checkPass !== '') {
+            this.$refs.ruleForm.validateField('checkPass');
+          }
+          callback();
+        }
+      };
       return {
-        msg: 'Welcome to Your Vue.js App'
+        ruleForm: {
+          pass: '',
+          checkPass: '',
+          name: ''
+        },
+        rules: {
+          pass: [{
+            validator: validatePass,
+            trigger: 'blur'
+          }],
+          name: [{
+            validator: checkName,
+            trigger: 'blur'
+          }]
+        }
+      };
+    },
+    methods: {
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
       }
     }
   }
 </script>
 
-<style>
+<style scoped>
+  .login-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 140px;
+  }
+
+  .login {
+    height: 300px;
+    border-radius: 5px;
+    box-shadow: 0 0 25px #c5c5c5;
+    padding: 20px;
+  }
+
+  .login-title {
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    padding: 5px 0;
+  }
+
+  .login-form{
+    padding: 20px 0;
+    margin-left: -60px;
+  }
+
+  .buton{
+    width: 100%;
+  }
 </style>

@@ -20,6 +20,7 @@
 </template>
 
 <script>
+  import {getLoginApi} from '@/api/index'
   export default {
     name: 'Login',
     data() {
@@ -31,18 +32,13 @@
       };
       var validatePass = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
+          return callback(new Error('请输入密码'));
         }
+        callback();
       };
       return {
         ruleForm: {
           pass: '',
-          checkPass: '',
           name: ''
         },
         rules: {
@@ -59,17 +55,21 @@
     },
     methods: {
       submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
+        const that = this;
+        that.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            getLoginApi(that.ruleForm).then((e,j)=>{
+              that.$message.success('恭喜你，登陆成功~');
+              that.$store.commit('SET_TOKEN',e.data.data.token);
+              that.$router.push({path:'home'})
+            }).catch((e)=>{
+              that.$message.error(e.data.msg);
+            });
           } else {
             return false;
           }
         });
       },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      }
     }
   }
 </script>

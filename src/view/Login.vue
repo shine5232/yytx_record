@@ -11,7 +11,7 @@
             <el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="请输入密码"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button class="buton" type="primary" size="medium" @click="submitForm('ruleForm')">提交</el-button>
+            <el-button class="buton" type="primary" size="medium" @click="submitForm('ruleForm')">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+  import {getLoginApi} from '@/api/index'
   export default {
     name: 'Login',
     data() {
@@ -31,18 +32,13 @@
       };
       var validatePass = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
+          return callback(new Error('请输入密码'));
         }
+        callback();
       };
       return {
         ruleForm: {
           pass: '',
-          checkPass: '',
           name: ''
         },
         rules: {
@@ -59,17 +55,21 @@
     },
     methods: {
       submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
+        const that = this;
+        that.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            getLoginApi(that.ruleForm).then((e,j)=>{
+              that.$message.success('恭喜你，登陆成功~');
+              localStorage.setItem('token',e.data.data.token);
+              that.$router.push({path:'home'})
+            }).catch((e)=>{
+              that.$message.error(e.data.msg);
+            });
           } else {
             return false;
           }
         });
       },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      }
     }
   }
 </script>
@@ -79,14 +79,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 140px;
+    position: absolute;
+    left: 40%;
+    top: 20%;
   }
 
   .login {
-    height: 300px;
+    height: 240px;
     border-radius: 5px;
     box-shadow: 0 0 25px #c5c5c5;
     padding: 20px;
+    background: #fff
   }
 
   .login-title {

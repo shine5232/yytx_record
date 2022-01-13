@@ -1,61 +1,59 @@
 import axios from 'axios'
-import Vue from 'vue'
-import store from '@/store/index'
 
-// 创建 axios 实例
-const requests = axios.create({
-  //baseURL: process.env.VUE_APP_API, // 基础url,如果是多环境配置这样写，也可以像下面一行的写死。
-　baseURL: 'https://laravel.harus.icu/api',
-  timeout: 6000 // 请求超时时间
-})
-// 错误处理函数
-const err = (error) => {
-  if (error.response) {
-    const data = error.response.data
-    //const token = Vue.ls.get(ACCESS_TOKEN)
-    if (error.response.status === 403) {
-      this.$message.error(data.message||data.msg);
-      //Notify({ type: 'danger', message: data.message||data.msg });
-    }
-    if (error.response.status === 401) {
-      this.$message.error('你没有权限。');
-        //Notify({ type: 'danger', message: '你没有权限。' });
-      // if (token) {
-      //   store.dispatch('Logout').then(() => {
-      //     setTimeout(() => {
-      //       window.location.reload()
-      //     }, 1500)
-      //   })
-      // }
-    }
+axios.defaults.baseURL = '/api'
+axios.defaults.headers.post['Content-Type'] = 'application/json'
+
+// 错误信息处理
+const  errorHandle = (status, other) => {
+  switch (status) {
+    case 400:
+      console.log('信息验证失败');
+      //this.$message.error('信息验证失败');
+      break;
+    case 401:
+      console.log('认证失败');
+      break;
+    case 403:
+      localStorage.removeItem("token");
+      console.log('token校验失败');
+      break;
+    case 404:
+      console.log('请求资源不存在');
+      break;
+    default :
+      console.log(other);
+      break;
   }
-  return Promise.reject(error)
 }
-
-// request interceptor(请求拦截器)
-requests.interceptors.request.use(config => {
-  /* const token = Vue.ls.get(ACCESS_TOKEN)
-  //const token = localStorage.getItem('token')
-  if (token) {
-    config.headers['token'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
-  } */
-  return config
-}, err)
-
-// response interceptor（接收拦截器）
-requests.interceptors.response.use((response) => {
-  const res = response.data
-  if (res.code!==200) {
-    this.$message.error(data.message||data.msg);
-    /* //Notify({ type: 'danger', message: res.message||res.msg });
-    // 401:未登录;
-    if (res.code === 401||res.code === 403||res.code===999) {
-      Notify({ type: 'danger', message: '请登录'});
-    } */
-    return Promise.reject('error')
-  } else {
-    return res
+// 添加请求拦截器
+axios.interceptors.request.use(function (config) {
+  // 在发送请求之前做些什么
+  // console.log(config);
+  /* if(localStorage.elementToken){
+    config.headers.Authorization=localStorage.elementToken;
   }
-}, err)
+  console.log(config); */
+  return config;
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error);
+});
 
-export default requests
+// 添加响应拦截器
+axios.interceptors.response.use(function (response) {
+  // 对响应数据做点什么
+  // console.log();
+  // console.log(response.data.token);
+  // response.headers['Authorization'] = response.data.token;
+  return response.status=== 200 ? Promise.resolve(response): Promise.reject(response);
+}, function (error) {
+  // 对响应错误做点什么
+  const {response}=error;
+  if(response){
+    errorHandle(response.status,response.data.msg)
+    return Promise.reject(response.data);
+  }else{
+    console.log('断了');
+  }
+});
+export default axios;

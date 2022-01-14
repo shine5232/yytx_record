@@ -60,7 +60,11 @@
           if (valid) {
             getLoginApi(that.ruleForm).then((e,j)=>{
               that.$message.success('恭喜你，登陆成功~');
+<<<<<<< HEAD
               localStorage.setItem('token',e.data.data.token);
+=======
+              that.$store.commit('SET_TOKEN',e.data.data.token);
+>>>>>>> e3fe3bb06a9605a9f85510ea6e818f61d1bfb2c1
               that.$router.push({path:'home'})
             }).catch((e)=>{
               that.$message.error(e.data.msg);
@@ -79,6 +83,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+<<<<<<< HEAD
     position: absolute;
     left: 40%;
     top: 20%;
@@ -90,6 +95,16 @@
     box-shadow: 0 0 25px #c5c5c5;
     padding: 20px;
     background: #fff
+=======
+    margin-top: 140px;
+  }
+
+  .login {
+    height: 300px;
+    border-radius: 5px;
+    box-shadow: 0 0 25px #c5c5c5;
+    padding: 20px;
+>>>>>>> e3fe3bb06a9605a9f85510ea6e818f61d1bfb2c1
   }
 
   .login-title {

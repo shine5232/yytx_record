@@ -9,23 +9,33 @@ export default {
   name: 'App',
   data(){
     return {
-      clientHeight:'',
+      clientHeight:0,
+      contentHeight:0,
     }
   },
   mounted(){
-    this.clientHeight = `${document.documentElement.clientHeight}`;
+    this.clientHeight = parseInt(`${document.documentElement.clientHeight}`);
+    this.contentHeight = this.clientHeight - 130;
+    localStorage.setItem('clientHeight',this.clientHeight);
+    localStorage.setItem('contentHeight',this.contentHeight);
     window.onresize = function temp(){
-      this.clientHeight = `${document.documentElement.clientHeight}`;
+      this.clientHeight = parseInt(`${document.documentElement.clientHeight}`);
+      this.contentHeight = this.clientHeight - 130;
+      localStorage.setItem('clientHeight',this.clientHeight);
+      localStorage.setItem('contentHeight',this.contentHeight);
     }
   },
   watch:{
     clientHeight:function(){
-      this.changeFixed(this.clientHeight)
+      this.changeFixed(this.clientHeight);
     }
   },
   methods:{
     changeFixed(clientHeight){
-      this.clientHeight = clientHeight;
+      this.clientHeight = parseInt(clientHeight);
+      this.contentHeight = this.clientHeight - 130;
+      localStorage.setItem('clientHeight',this.clientHeight);
+      localStorage.setItem('contentHeight',this.contentHeight);
     }
   }
 }

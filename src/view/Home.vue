@@ -1,50 +1,57 @@
 <template>
   <div class="hello">
     <Header />
-    <div class="content">
-      <div class="content-left">q</div>
-      <div class="content-center">w</div>
-      <div class="content-right">r</div>
+    <div class="content" v-bind:style="{height:contentHeight+'px'}">
+      <SearchUser />
+      <SearchUserTalk />
+      <div class="content-right">未开发...</div>
     </div>
     <Footer />
   </div>
 </template>
 
 <script>
-import Header from "../components/Header.vue"
-import Footer from "../components/Footer.vue"
-export default {
-  name: 'Home',
-  components:{Header,Footer},
-  data () {
-    return {
+  import Header from "../components/Header.vue"
+  import Footer from "../components/Footer.vue"
+  import SearchUser from "../components/SearchUser.vue"
+  import SearchUserTalk from "../components/SearchUserTalk.vue"
+
+  export default {
+    name: 'Home',
+    components: {
+      Header,
+      Footer,
+      SearchUser,
+      SearchUserTalk
+    },
+    data() {
+      return {
+        contentHeight: 0,
+      }
+    },
+    mounted() {
+      this.contentHeight = localStorage.getItem('contentHeight');
+    },
+    methods: {
 
     }
-  },
-  methods: {
-
   }
-}
 </script>
 
 <style scoped>
-  .content{
+  .content {
     display: flex;
-    align-items: center;
-    margin: 5px 0;
+    margin: 10px 0;
     width: 100%;
+    overflow: hidden;
   }
-  .content-left,.content-right,.content-center{
-    background: #fff;
-    margin-right: 5px;
-  }
-  .content-left{
-    width: 200px;
-  }
-  .content-center{
-    width: 300px;
-  }
+
   .content-right{
+    background: #fff;
+    margin-right: 10px;
+  }
+
+  .content-right {
     flex: 1;
   }
 </style>

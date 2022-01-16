@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/view/Home'
+import User from '@/view/User'
 import Login from '@/view/Login'
 
 Vue.use(Router)
@@ -13,6 +14,20 @@ const router = new Router({
       component: Home,
       meta: {
         requireAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
+      }
+    },{
+      path: '/home',
+      name: 'home',
+      component: Home,
+      meta: {
+        requireAuth: true,
+      }
+    },{
+      path: '/user',
+      name: 'user',
+      component: User,
+      meta: {
+        requireAuth: true,
       }
     },{
       path: '/login',

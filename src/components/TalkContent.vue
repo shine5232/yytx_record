@@ -1,27 +1,35 @@
 <template>
-  <div class="content-left">
-    <div class="company-user-search">
-      <div class="search-title">公司员工（{{employeesNumber}}）</div>
+  <div class="content-right">
+    <div class="user-talk-search">
+      <div class="search-title">会话对象</div>
       <div class="search-form">
         <div class="search-form-item">
-          <el-select v-model="value" placeholder="请选择" size="mini" @change="selectDepartment">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
+          <el-tabs v-model="activeName" @tab-click="selectTab">
+            <el-tab-pane label="客户" name="customer" />
+            <el-tab-pane label="同事" name="colleague" />
+            <el-tab-pane label="群聊" name="groupchat" />
+          </el-tabs>
         </div>
         <div class="search-form-item">
           <el-input placeholder="请输入姓名" size="mini" prefix-icon="el-icon-search" v-model="input" @change="inputUser" />
         </div>
       </div>
     </div>
-    <div class="company-user-list" v-bind:style="{height:listHeight+'px'}">
+    <div class="user-talk-list" v-bind:style="{height:listHeight+'px'}">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <van-sidebar v-model="activeKey">
           <van-sidebar-item v-for="item in list" :key="item" @click="selectUser(item)">
             <div slot="title" class="sidebar-item-title">
               <div class="user-img">
-                <img src="/static/image/u28.png" />
+                <img src="/static/image/u26.png" />
               </div>
-              <div class="user-name">杨森</div>
+              <div class="user-name">
+                <div class="user-name-top">
+                  <div>李经理</div>
+                  <div class="time">17:20</div>
+                </div>
+                <div class="user-name-note">深圳市腾讯计算机系统有限公司</div>
+              </div>
             </div>
           </van-sidebar-item>
         </van-sidebar>
@@ -37,29 +45,31 @@
     SidebarItem
   } from 'vant';
   export default {
-    name: 'SearchUser',
+    name: 'TalkContent',
     components: {
       vanList: List,
       vanSidebar: Sidebar,
       vanSidebarItem: SidebarItem,
     },
+    props:{
+      talkId: {
+        type: Number,
+        default: 0
+      }
+    },
+    watch:{
+      //监听到talkId变化时，触发相应函数
+      talkId(newValue,oldValue){
+        this.loading = true;
+        this.finished = false;
+        this.list = [];
+        this.activeKey = 0;
+        this.onLoad();
+      },
+    },
     data() {
       return {
-        employeesNumber: 3,
-        options: [{
-          value: '1',
-          label: '宇音天下'
-        }, {
-          value: '2',
-          label: '商务部'
-        }, {
-          value: '3',
-          label: '研发部'
-        }, {
-          value: '4',
-          label: '财务部'
-        }],
-        value: '1',
+        activeName: 'customer',
         input: '',
         list: [],
         loading: false,
@@ -70,12 +80,19 @@
     },
     mounted() {
       this.listHeight = localStorage.getItem('contentHeight') - 131;
-      this.$emit('selectUser',1);
+      this.$emit('selectTalk',1);
     },
     methods: {
-      //加载用户数据
+      //加载会话列表数据
       onLoad() {
         const that = this;
+        console.log('接收父组件传递数据',that.talkId);
+        let data = {
+          type: that.activeName,
+          user_name: that.input,
+          user_id:that.talkId
+        };
+        console.log('data', data);
         // 异步更新数据
         // setTimeout 仅做示例，真实场景中一般为 ajax 请求
         setTimeout(() => {
@@ -90,14 +107,14 @@
           }
         }, 1000);
       },
-      //选择部门
-      selectDepartment(e) {
-        console.log('select this department', e);
+      //选择tab
+      selectTab(tab, event) {
         const that = this;
         let data = {
-          department: e,
-          user_name: that.input
-        }
+          type: tab.name,
+          user_name: that.input,
+          user_id:that.talkId
+        };
         console.log('data', data);
         that.loading = true;
         that.finished = false;
@@ -109,8 +126,9 @@
         console.log('input this data', e);
         const that = this;
         let data = {
-          department: that.value,
-          user_name: e
+          type: that.activeName,
+          user_name: e,
+          user_id:that.talkId
         }
         console.log('data', data);
         that.loading = true;
@@ -120,47 +138,44 @@
       },
       //选择用户
       selectUser(e) {
+        console.log('select this user', e);
         const that = this;
-        that.$emit('selectUser',e);
+        that.$emit('selectTalk',e);
       },
     }
   }
 </script>
 
 <style scoped>
-  .content-left {
+  .content-right {
     background: #fff;
     margin-right: 10px;
   }
 
-  .content-left {
-    width: 250px;
+  .content-right {
+    flex: 1;
   }
 
-  .company-user-search .search-title {
+  .user-talk-search .search-title {
     text-align: left;
     padding: 16px 25px 0;
     font-size: 16px;
     font-weight: bold;
   }
 
-  .company-user-search .search-form {
+  .user-talk-search .search-form {
     width: 80%;
     margin: 10px auto;
   }
 
-  .search-form .search-form-item {
-    margin-bottom: 10px;
-  }
-
-  .company-user-list {
+  .user-talk-list {
     overflow-y: scroll;
     height: 480px;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
   }
 
-  .company-user-list::-webkit-scrollbar {
+  .user-talk-list::-webkit-scrollbar {
     width: 0 !important
   }
 
@@ -186,7 +201,6 @@
 
   .sidebar-item-title {
     display: flex;
-    align-items: center;
   }
 
   .sidebar-item-title .user-img {
@@ -202,5 +216,22 @@
   .user-img img {
     width: 100%;
     height: 100%;
+  }
+
+  .user-name {
+    flex: 1;
+  }
+
+  .user-name .user-name-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 3px;
+    width: 200px;
+  }
+  .user-name .time,
+  .user-name-note {
+    font-size: 12px;
+    color: #a9a9a9;
   }
 </style>

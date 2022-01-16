@@ -1,15 +1,17 @@
 <template>
   <div class="header">
     <div class="header-left">宇音天下会话内容存档系统</div>
-    <div class="header-right">
-      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-        <el-submenu index="1">
-          <template slot="title">我的工作台</template>
-          <el-menu-item index="1-1" route="">用户</el-menu-item>
-          <el-menu-item index="1-2" route="">权限</el-menu-item>
-          <el-menu-item index="1-3" route="loginOut">退出</el-menu-item>
-        </el-submenu>
-      </el-menu>
+    <div class="header-right"
+      <el-dropdown @command="handleSelect">
+        <span class="el-dropdown-link">
+          我的工作台<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="user">用户</el-dropdown-item>
+          <el-dropdown-item command="role">权限</el-dropdown-item>
+          <el-dropdown-item command="loginOut">退出</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
   </div>
 </template>
@@ -23,13 +25,15 @@ export default {
     }
   },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+    handleSelect(key) {
       const that = this;
-      if(key == '1-3'){
+      if(key == 'loginOut'){
         localStorage.removeItem('token');
         that.$message.success('退出成功');
         that.$router.push({path:'login'})
+      }
+      if(key == 'user'){
+        that.$router.push({path:'user'})
       }
     }
   },
@@ -41,7 +45,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px;
+    padding: 20px;
     background: #fff;
   }
   .header-left{
@@ -49,7 +53,11 @@ export default {
     color: #1A73E8;
     font-weight: bold;
   }
-  .el-menu::after{
-    display: none !important;
+  .el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+  }
+  .el-icon-arrow-down {
+    font-size: 12px;
   }
 </style>

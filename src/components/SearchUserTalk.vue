@@ -51,6 +51,22 @@
       vanSidebar: Sidebar,
       vanSidebarItem: SidebarItem,
     },
+    props:{
+      userId: {
+        type: Number,
+        default: 0
+      }
+    },
+    watch:{
+      //监听到userId变化时，触发相应函数
+      userId(newValue,oldValue){
+        this.loading = true;
+        this.finished = false;
+        this.list = [];
+        this.activeKey = 0;
+        this.onLoad();
+      },
+    },
     data() {
       return {
         activeName: 'customer',
@@ -64,11 +80,19 @@
     },
     mounted() {
       this.listHeight = localStorage.getItem('contentHeight') - 131;
+      this.$emit('selectTalk',1);
     },
     methods: {
-      //加载用户数据
+      //加载会话列表数据
       onLoad() {
         const that = this;
+        console.log('接收父组件传递数据',that.userId);
+        let data = {
+          type: that.activeName,
+          user_name: that.input,
+          user_id:that.userId
+        };
+        console.log('data', data);
         // 异步更新数据
         // setTimeout 仅做示例，真实场景中一般为 ajax 请求
         setTimeout(() => {
@@ -88,7 +112,8 @@
         const that = this;
         let data = {
           type: tab.name,
-          user_name: that.input
+          user_name: that.input,
+          user_id:that.userId
         };
         console.log('data', data);
         that.loading = true;
@@ -102,7 +127,8 @@
         const that = this;
         let data = {
           type: that.activeName,
-          user_name: e
+          user_name: e,
+          user_id:that.userId
         }
         console.log('data', data);
         that.loading = true;
@@ -113,6 +139,8 @@
       //选择用户
       selectUser(e) {
         console.log('select this user', e);
+        const that = this;
+        that.$emit('selectTalk',e);
       },
     }
   }

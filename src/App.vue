@@ -15,12 +15,12 @@ export default {
   },
   mounted(){
     this.clientHeight = parseInt(`${document.documentElement.clientHeight}`);
-    this.contentHeight = this.clientHeight - 130;
+    this.contentHeight = this.clientHeight - 120;
     localStorage.setItem('clientHeight',this.clientHeight);
     localStorage.setItem('contentHeight',this.contentHeight);
     window.onresize = function temp(){
       this.clientHeight = parseInt(`${document.documentElement.clientHeight}`);
-      this.contentHeight = this.clientHeight - 130;
+      this.contentHeight = this.clientHeight - 120;
       localStorage.setItem('clientHeight',this.clientHeight);
       localStorage.setItem('contentHeight',this.contentHeight);
     }
@@ -33,7 +33,7 @@ export default {
   methods:{
     changeFixed(clientHeight){
       this.clientHeight = parseInt(clientHeight);
-      this.contentHeight = this.clientHeight - 130;
+      this.contentHeight = this.clientHeight - 120;
       localStorage.setItem('clientHeight',this.clientHeight);
       localStorage.setItem('contentHeight',this.contentHeight);
     }

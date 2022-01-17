@@ -1,38 +1,49 @@
 <template>
   <div class="content-right">
     <div class="user-talk-search">
-      <div class="search-title">会话对象</div>
-      <div class="search-form">
-        <div class="search-form-item">
-          <el-tabs v-model="activeName" @tab-click="selectTab">
-            <el-tab-pane label="客户" name="customer" />
-            <el-tab-pane label="同事" name="colleague" />
-            <el-tab-pane label="群聊" name="groupchat" />
-          </el-tabs>
+      <div slot="title" class="sidebar-item-title">
+        <div class="user-img">
+          <img src="/static/image/u26.png" />
         </div>
-        <div class="search-form-item">
-          <el-input placeholder="请输入姓名" size="mini" prefix-icon="el-icon-search" v-model="input" @change="inputUser" />
+        <div class="user-name">
+          <div class="user-name-top">
+            <div>李经理</div>
+          </div>
+          <div class="user-name-note">深圳市腾讯计算机系统有限公司</div>
+        </div>
+        <div class="search-form">
+          <div class="search-form-item">
+            <el-input placeholder="搜索消息" size="mini" prefix-icon="el-icon-search" v-model="input" @change="inputUser" />
+          </div>
+          <div class="search-form-item">
+            <el-date-picker v-model="value1" type="date" size="mini" placeholder="开始日期" format="yyyy 年 MM 月 dd 日" value-format="timestamp"></el-date-picker>
+          </div>
+          <div class="search-form-item">
+            <el-date-picker v-model="value2" type="date" size="mini" placeholder="结束日期" format="yyyy 年 MM 月 dd 日" value-format="timestamp"></el-date-picker>
+          </div>
         </div>
       </div>
     </div>
-    <div class="user-talk-list" v-bind:style="{height:listHeight+'px'}">
+    <div class="user-talk-list">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <van-sidebar v-model="activeKey">
-          <van-sidebar-item v-for="item in list" :key="item" @click="selectUser(item)">
-            <div slot="title" class="sidebar-item-title">
-              <div class="user-img">
-                <img src="/static/image/u26.png" />
-              </div>
-              <div class="user-name">
-                <div class="user-name-top">
-                  <div>李经理</div>
-                  <div class="time">17:20</div>
-                </div>
-                <div class="user-name-note">深圳市腾讯计算机系统有限公司</div>
-              </div>
+        <div class="sidebar-item-title" style="margin: 10px 0;" v-for="item in list" :key="item" @click="selectUser(item)">
+          <div class="left" v-if="item % 2 != 0">
+            <div class="user-img">
+              <img src="/static/image/u26.png" />
             </div>
-          </van-sidebar-item>
-        </van-sidebar>
+            <div class="user-name">
+              <div class="user-name-notes">深圳市腾讯计算机系统有限公司</div>
+            </div>
+          </div>
+          <div class="right" v-else>
+            <div class="user-name">
+              <div class="user-name-notes">深圳市腾讯计算机系统有限公司</div>
+            </div>
+            <div class="user-img">
+              <img src="/static/image/u28.png" />
+            </div>
+          </div>
+        </div>
       </van-list>
     </div>
   </div>
@@ -76,6 +87,8 @@
         finished: false,
         listHeight: 0,
         activeKey: 0,
+        value1: '',
+        value2:'',
       }
     },
     mounted() {
@@ -148,14 +161,16 @@
 
 <style scoped>
   .content-right {
-    background: #fff;
     margin-right: 10px;
   }
 
   .content-right {
     flex: 1;
   }
-
+  .user-talk-search{
+    padding: 10px;
+    background: #fff;
+  }
   .user-talk-search .search-title {
     text-align: left;
     padding: 16px 25px 0;
@@ -164,13 +179,20 @@
   }
 
   .user-talk-search .search-form {
-    width: 80%;
-    margin: 10px auto;
+    display: flex;
+    align-items: center;
   }
-
+  .search-form-item{
+    margin: 0 2px;
+  }
+  .el-date-editor.el-input, .el-date-editor.el-input__inner{
+    width: 170px !important;
+  }
   .user-talk-list {
     overflow-y: scroll;
     height: 480px;
+    background: #fff;
+    margin-top: 5px;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
   }
@@ -201,25 +223,37 @@
 
   .sidebar-item-title {
     display: flex;
+    align-items: center;
   }
 
   .sidebar-item-title .user-img {
     width: 40px;
     height: 40px;
-    margin: 0 15px;
+    margin: 0 10px;
   }
 
   .sidebar-item-title .user-name {
     font-size: 14px;
   }
-
+  .left{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .right{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
   .user-img img {
     width: 100%;
     height: 100%;
   }
 
   .user-name {
-    flex: 1;
+    text-align: left;
   }
 
   .user-name .user-name-top {
@@ -229,9 +263,14 @@
     margin-bottom: 3px;
     width: 200px;
   }
-  .user-name .time,
-  .user-name-note {
+  .user-name .user-name-note {
     font-size: 12px;
     color: #a9a9a9;
+  }
+  .user-name-notes{
+    background-color: #EBEDF0;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 13px;
   }
 </style>

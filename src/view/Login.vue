@@ -60,8 +60,8 @@
           if (valid) {
             getLoginApi(that.ruleForm).then((e,j)=>{
               that.$message.success('恭喜你，登陆成功~');
-              localStorage.setItem('token',e.data.data.token);
-              that.$router.push({path:'home'})
+              sessionStorage.setItem('token',e.data.data.token);
+              that.$router.push({path:'/'})
             }).catch((e)=>{
               that.$message.error(e.data.msg);
             });

@@ -7,8 +7,6 @@
           我的工作台<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="user">用户</el-dropdown-item>
-          <el-dropdown-item command="role">权限</el-dropdown-item>
           <el-dropdown-item command="loginOut">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -28,12 +26,11 @@ export default {
     handleSelect(key) {
       const that = this;
       if(key == 'loginOut'){
-        localStorage.removeItem('token');
-        that.$message.success('退出成功');
-        that.$router.push({path:'login'})
-      }
-      if(key == 'user'){
-        that.$router.push({path:'user'})
+        that.$confirm('确认退出?', '提示', {}).then(() => {
+            sessionStorage.removeItem('token');
+            that.$message.success('退出成功');
+            that.$router.push({path:'login'})
+        }).catch(() => {});
       }
     }
   },

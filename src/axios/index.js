@@ -14,7 +14,7 @@ const  errorHandle = (status, other) => {
       console.log('认证失败');
       break;
     case 403:
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       console.log('token校验失败');
       break;
     case 404:
@@ -29,8 +29,8 @@ const  errorHandle = (status, other) => {
 axios.interceptors.request.use(function (config) {
   // 在发送请求之前做些什么
   // console.log(config);
-  /* if(localStorage.elementToken){
-    config.headers.Authorization=localStorage.elementToken;
+  /* if(sessionStorage.elementToken){
+    config.headers.Authorization=sessionStorage.elementToken;
   }
   console.log(config); */
   return config;

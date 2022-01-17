@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div class="user-talk-list" v-bind:style="{height:listHeight+'px'}">
+    <div class="user-talk-list">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <van-sidebar v-model="activeKey">
           <van-sidebar-item v-for="item in list" :key="item" @click="selectUser(item)">
@@ -170,7 +170,7 @@
 
   .user-talk-list {
     overflow-y: scroll;
-    height: 480px;
+    height: 420px;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
   }

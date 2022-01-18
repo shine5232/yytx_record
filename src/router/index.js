@@ -17,9 +17,9 @@ const router = new Router({
         requireAuth: true,  // 添加该字段，表示进入这个路由是需要登录的
       },
       children: [
-        {path: 'talk', name: '会话管理', component: Talk, },
-        {path: 'user', name: '用户管理', component: User, },
-        {path: 'role', name: '权限管理', component: User, },
+        {path: 'talk', name: '会话管理', component: Talk, icon:'el-icon-menu' },
+        {path: 'user', name: '员工管理', component: User, icon:'el-icon-s-custom' },
+        {path: 'role', name: '权限管理', component: User, icon:'el-icon-s-tools' },
       ]
     },{
       path: '/login',

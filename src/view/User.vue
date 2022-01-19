@@ -16,7 +16,7 @@
           <el-button type="primary" size="mini" @click="onSubmit">查询</el-button>
         </el-form-item>
         <el-form-item class="form-item">
-          <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="dialogFormVisible = true">添加
+          <el-button type="primary" size="mini" icon="el-icon-circle-plus-outline" @click="addUser('ruleForm')">添加
           </el-button>
         </el-form-item>
       </el-form>
@@ -42,7 +42,7 @@
     <div class="page">
       <el-pagination background layout="prev, pager, next" :total="20" @current-change="pageChange"></el-pagination>
     </div>
-    <el-dialog title="添加员工" :visible.sync="dialogFormVisible">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" ref="ruleForm">
         <el-form-item label="员工姓名" prop="name" required :label-width="formLabelWidth">
           <el-input v-model="form.name" placeholder="请输入员工姓名" autocomplete="off"></el-input>
@@ -62,7 +62,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false" size="mini">取 消</el-button>
+        <el-button @click="cancle('ruleForm')" size="mini">取 消</el-button>
         <el-button type="primary" @click="submitForm('ruleForm')" size="mini">确 定</el-button>
       </div>
     </el-dialog>
@@ -77,9 +77,9 @@
     },
     data() {
       return {
-        dialogFormVisible: false,
         dialogTableVisible: false,
         dialogFormVisible: false,
+        title:'添加员工',
         form: {
           name: '',
           group: '',
@@ -112,36 +112,50 @@
           id: 1,
           name: '王小虎',
           group: '商务部',
+          group_id: 1,
+          position_id:2,
           position: '员工',
         }, {
           id: 2,
           name: '王小虎',
           group: '商务部',
+          group_id: 1,
+          position_id:2,
           position: '员工',
         }, {
           id: 3,
           name: '王小虎',
           group: '商务部',
+          group_id: 1,
+          position_id:2,
           position: '员工',
         }, {
           id: 4,
           name: '王小虎',
           group: '商务部',
+          group_id: 1,
+          position_id:2,
           position: '员工',
         }, {
           id: 5,
           name: '王小虎',
           group: '商务部',
+          group_id: 1,
+          position_id:2,
           position: '员工',
         }, {
           id: 6,
           name: '王小虎',
           group: '商务部',
+          group_id: 1,
+          position_id:2,
           position: '员工',
         }, {
           id: 7,
           name: '王小虎',
           group: '商务部',
+          group_id: 1,
+          position_id:2,
           position: '员工',
         }]
       }
@@ -157,7 +171,18 @@
         rows.splice(index, 1);
       },
       editRow(index, rows) {
-        console.log(index, rows);
+        this.title = '编辑员工';
+        this.form.name = this.tableData[index].name;
+        this.form.group = this.tableData[index].group_id.toString();
+        this.form.position = this.tableData[index].position_id.toString();
+        this.dialogFormVisible = true;
+      },
+      addUser(formName){
+        this.title = '添加员工';
+        this.form.name = '';
+        this.form.group = '';
+        this.form.position = '';
+        this.dialogFormVisible = true;
       },
       pageChange(index) {
         console.log(index);
@@ -165,12 +190,16 @@
       submitForm(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            console.log(this.form);
             alert('submit!');
           } else {
             console.log('error submit!!');
             return false;
           }
         });
+      },
+      cancle(formName){
+        this.dialogFormVisible = false;
       },
     }
   }

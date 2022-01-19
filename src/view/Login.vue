@@ -3,12 +3,17 @@
     <div class="login">
       <div class="login-title">系统登录</div>
       <div class="login-form">
-        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
           <el-form-item label="账号" prop="name">
             <el-input v-model.number="ruleForm.name" autocomplete="off" placeholder="请输入账号"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="pass">
             <el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="请输入密码"></el-input>
+          </el-form-item>
+          <el-form-item label="验证码" prop="code">
+            <el-input v-model="ruleForm.code" autocomplete="off" placeholder="请输入验证码">
+              <el-button slot="append">S U 7 C E</el-button>
+            </el-input>
           </el-form-item>
           <el-form-item>
             <el-button class="buton" type="primary" size="medium" @click="submitForm('ruleForm')">登录</el-button>
@@ -36,10 +41,17 @@
         }
         callback();
       };
+      var checkCode = (rule, value, callback)=>{
+        if (value === '') {
+          return callback(new Error('请输入验证码'));
+        }
+        callback();
+      };
       return {
         ruleForm: {
           pass: '',
-          name: ''
+          name: '',
+          code:'',
         },
         rules: {
           pass: [{
@@ -48,6 +60,10 @@
           }],
           name: [{
             validator: checkName,
+            trigger: 'blur'
+          }],
+          code: [{
+            validator: checkCode,
             trigger: 'blur'
           }]
         }

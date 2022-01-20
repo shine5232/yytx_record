@@ -22,7 +22,7 @@
       </el-form>
     </div>
     <div class="table">
-      <el-table :data="tableData" border style="width: 100%" max-height="500">
+      <el-table :data="tableData" border style="width: 100%" max-height="500" v-loading="loading" >
         <el-table-column prop="id" label="序号" width="50"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column prop="group" label="所属部门"></el-table-column>
@@ -40,9 +40,33 @@
       </el-table>
     </div>
     <div class="page">
-      <el-pagination background layout="prev, pager, next" :total="20" @current-change="pageChange"></el-pagination>
+      <el-pagination background layout="prev, pager, next" :total="total" @current-change="pageChange"></el-pagination>
     </div>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible">
+    <el-dialog title="添加员工" :visible.sync="dialogVisible">
+      <el-form :model="formAdd" :rules="rules" ref="ruleFormAdd">
+        <el-form-item label="员工姓名" prop="name" required :label-width="formLabelWidth">
+          <el-input v-model="formAdd.name" placeholder="请输入员工姓名" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="所属部门" prop="group" required :label-width="formLabelWidth">
+          <el-select v-model="formAdd.group" placeholder="请选择所属部门">
+            <el-option label="商务部" value="1"></el-option>
+            <el-option label="财务部" value="2"></el-option>
+            <el-option label="技术部" value="3"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="员工职位" prop="position" required :label-width="formLabelWidth">
+          <el-select v-model="formAdd.position" placeholder="请选择员工职位">
+            <el-option label="部门领导" value="1"></el-option>
+            <el-option label="员工" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancleAdd('ruleFormAdd')" size="mini">取 消</el-button>
+        <el-button type="primary" @click="submitFormAdd('ruleFormAdd')" size="mini">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="编辑员工" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules" ref="ruleForm">
         <el-form-item label="员工姓名" prop="name" required :label-width="formLabelWidth">
           <el-input v-model="form.name" placeholder="请输入员工姓名" autocomplete="off"></el-input>
@@ -79,8 +103,13 @@
       return {
         dialogTableVisible: false,
         dialogFormVisible: false,
-        title:'添加员工',
+        dialogVisible: false,
         form: {
+          name: '',
+          group: '',
+          position: '',
+        },
+        formAdd: {
           name: '',
           group: '',
           position: '',
@@ -108,56 +137,58 @@
           user: '',
           group: ''
         },
+        total:7,
         tableData: [{
           id: 1,
-          name: '王小虎',
-          group: '商务部',
+          name: '王1',
+          group: '技术部',
           group_id: 1,
           position_id:2,
-          position: '员工',
+          position: '部门领导',
         }, {
           id: 2,
-          name: '王小虎',
+          name: '王2',
           group: '商务部',
           group_id: 1,
           position_id:2,
           position: '员工',
         }, {
           id: 3,
-          name: '王小虎',
-          group: '商务部',
+          name: '王3',
+          group: '技术部',
           group_id: 1,
           position_id:2,
           position: '员工',
         }, {
           id: 4,
-          name: '王小虎',
+          name: '王4',
           group: '商务部',
           group_id: 1,
           position_id:2,
-          position: '员工',
+          position: '部门领导',
         }, {
           id: 5,
-          name: '王小虎',
-          group: '商务部',
+          name: '王5',
+          group: '技术部',
           group_id: 1,
           position_id:2,
-          position: '员工',
+          position: '部门领导',
         }, {
           id: 6,
-          name: '王小虎',
+          name: '王6',
           group: '商务部',
           group_id: 1,
           position_id:2,
           position: '员工',
         }, {
           id: 7,
-          name: '王小虎',
-          group: '商务部',
+          name: '王7',
+          group: '技术部',
           group_id: 1,
           position_id:2,
-          position: '员工',
-        }]
+          position: '部门领导',
+        }],
+        loading: false,
       }
     },
     mounted() {
@@ -165,33 +196,52 @@
     },
     methods: {
       onSubmit() {
-        console.log('submit!');
+        const that = this;
+        that.loading = true;
+        setTimeout(()=>{
+          that.loading = false;
+        },2000);
       },
       deleteRow(index, rows) {
         rows.splice(index, 1);
       },
       editRow(index, rows) {
-        this.title = '编辑员工';
         this.form.name = this.tableData[index].name;
-        this.form.group = this.tableData[index].group_id.toString();
-        this.form.position = this.tableData[index].position_id.toString();
+        this.form.group = this.tableData[index].group;
+        this.form.position = this.tableData[index].position;
         this.dialogFormVisible = true;
       },
       addUser(formName){
-        this.title = '添加员工';
-        this.form.name = '';
-        this.form.group = '';
-        this.form.position = '';
-        this.dialogFormVisible = true;
+        this.formAdd.name = '';
+        this.formAdd.group = '';
+        this.formAdd.position = '';
+        this.dialogVisible = true;
       },
       pageChange(index) {
         console.log(index);
       },
-      submitForm(formName){
-        this.$refs[formName].validate((valid) => {
+      submitFormAdd(formName){
+        const that = this;
+        that.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(this.form);
-            alert('submit!');
+            console.log(that.formAdd);
+            that.dialogVisible = false;
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      cancleAdd(formName){
+        const that = this;
+        that.dialogVisible = false;
+      },
+      submitForm(formName){
+        const that = this;
+        that.$refs[formName].validate((valid) => {
+          if (valid) {
+            console.log(that.form);
+            that.dialogFormVisible = false;
           } else {
             console.log('error submit!!');
             return false;
@@ -199,7 +249,8 @@
         });
       },
       cancle(formName){
-        this.dialogFormVisible = false;
+        const that = this;
+        that.dialogFormVisible = false;
       },
     }
   }
